@@ -3,6 +3,12 @@ import time
 from enum import Enum
 import numpy as np
 import matplotlib . pyplot as plot
+import sys
+import threading
+
+threading.stack_size(67108864)
+sys.setrecursionlimit(2 ** 20)
+
 
 ### enum for sorts ###
 class aSort(Enum):
@@ -18,7 +24,7 @@ def fr_partition(array, low, high):
 
 	# Choose the rightmost element as pivot
 	pivot = array[high]
-	print("pivot of fr: ", pivot)
+	#print("pivot of fr: ", pivot)
 	# Pointer for greater element
 	i = low - 1
 
@@ -65,7 +71,7 @@ def m_partition(array, low, high):
 	# Choose the rightmost element as pivot
 	l = int((high + low) / 2)
 	pivot = array[l]
-	print("pivot of m:",pivot)
+	#print("pivot of m:",pivot)
 
 	# Pointer for greater element
 	i = low - 1
@@ -111,7 +117,7 @@ def r_partition(array, low, high):
 	# Choose the rightmost element as pivot
 	rand = random.randrange(low, high)
 	pivot = array[rand]
-	print("pivot of r:",pivot)
+	#print("pivot of r:",pivot)
 	# Pointer for greater element
 	i = low - 1
 
@@ -152,29 +158,57 @@ def r_quick_sort(array, low, high):
 
 # FILLING TAB
 def tab_a_fill(arr, len):
-	for i in range(int(len/2)):
+	
+	for i in range(0, len , 2):
 		arr.append(i)
-	for i in range( len-1, int(len/2), -1):
+
+	for i in range(len - 1, 0, -2):
 		arr.append(i)
+    
 
 # Measuring time
 def mTime(ar, sort, results):
 	if sort == aSort.fr:
 		start_time = time.time()
-        fr_quick_sort(ar.copy())
-        stop_time = time.time() - start_time
+		fr_quick_sort(ar.copy(), 0, len(ar) - 1)
+		stop_time = time.time() - start_time
 	
 	elif sort == aSort.m:
 		start_time = time.time()
-        m_quick_sort(ar.copy())
-        stop_time = time.time() - start_time
+		m_quick_sort(ar.copy(), 0, len(ar) - 1)
+		stop_time = time.time() - start_time
 	
 	elif sort == aSort.r:
 		start_time = time.time()
-        r_quick_sort(ar.copy())
-        stop_time = time.time() - start_time
+		r_quick_sort(ar.copy(), 0, len(ar) - 1)
+		stop_time = time.time() - start_time
 	
 	results.append(stop_time)
+
+
+
+# Making graphs
+def plotting(vfr,vm,vr,vTime):
+    #linear
+    plot.subplot(1, 2, 1)
+    plot.plot(vTime, vfr, vTime, vm, vTime, vr)
+    plot.title("linear")
+    plot.xlabel('number of sorts')
+    plot.ylabel('time[s]')
+    plot.legend(["right","mediana","random"])
+    plot.grid(True)
+
+    #logarithm
+    plot.subplot(1, 2, 2)
+    plot.plot(vTime, vfr, vTime, vm, vTime, vr)
+    plot.yscale('log')
+    plot.title(str('log'))
+    plot.xlabel('number of sorts')
+    plot.ylabel('time[s]')
+    plot.legend(["right","mediana","random"])
+    plot.grid(True) 
+    
+
 
 ######################### main ##############################################
 
@@ -184,49 +218,43 @@ def main():
     
 	### settings of measure ###
 
-	ar = []
-	start_num = 10
-	last_num = 20
-    step = 2
+	
+	start_num = 20
+	last_num = 24
+	step = 2
     
 
 	### bufored times ###
-    vfr = []
-    vm = []
-    vr = []
-    vTime = []
+	vfr = []
+	vm = []
+	vr = []
+	vTime = []
     
 
 	### performing test ###
-	for i in range(start_num, last_num, step):
-	    tab_a_fill(ar, i)
-	    vTime.append(i) #making y dimmension for plot
-        print("Filling, len of arr: ", len(ar), " of ", last_num)
+	for i in range(start_num, last_num + 1, step):
+		ar = []
+		tab_a_fill(ar, i)
+		vTime.append(i) #making y dimmension for plot
+		print("Filling, len of arr: ", len(ar), " of ", last_num)
+		print("i: ", i, "ar: ", ar)
 
-    	mTime(ar, aSort.fr, vfr)
-    	mTime(ar, aSort.m, vm)
-    	mTime(ar, aSort.r, vr)
+		
+		r_quick_sort(ar, 0, len(ar) - 1)
+		print("ar after sort: ", ar)
+
+		#mTime(ar, aSort.fr, vfr)
+		#mTime(ar, aSort.m, vm)
+		#mTime(ar, aSort.r, vr)
     
         #print(sort.name,"  %s seconds " % (t))            
-		del ar	    
+		del ar	 
 
-
-    #fr
-	array = [10, 7, 8, 9, 1, 5]
-	fr_quick_sort(array, 0, len(array) - 1)
-	print(f'Sorted array fr: {array}')
-
-    #mid
-	array1 = [10, 7, 8, 9, 1, 5]
-	m_quick_sort(array1, 0, len(array1) - 1)
-	print(f'Sorted array mid: {array1}')
-
-    #rand
-	array2 = [10, 7, 8, 9, 1, 5]
-	r_quick_sort(array2, 0, len(array2) - 1)
-	print(f'Sorted array rand: {array2}')
+	#plotting(vfr, vm, vr, vTime)
+	#plot.show()
 
 	
 
 if __name__ == "__main__":
-    main()
+    thread = threading.Thread(target=main) 
+    thread.start()
