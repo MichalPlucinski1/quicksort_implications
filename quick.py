@@ -58,22 +58,38 @@ def quick_sort_right(A, left, right):
         quick_sort_right(
             A, pivot_index + 1, right
         )  # recursive quicksort to the right of the pivot point
+def partition_med(A, low, high):
+    # We select the middle element to be the pivot. Some implementations select
+    # the first element or the last element. Sometimes the median value becomes
+    # the pivot, or a random one. There are many more strategies that can be
+    # chosen or created.
+    pivot = A[(low + high) // 2]
+    i = low - 1
+    j = high + 1
+    while True:
+        i += 1
+        while A[i] < pivot:
+            i += 1
+
+        j -= 1
+        while A[j] > pivot:
+            j -= 1
+
+        if i >= j:
+            return j
+
+        # If an element at i (on the left of the pivot) is larger than the
+        # element at j (on right right of the pivot), then swap them
+        A[i], A[j] = A[j], A[i]
 
 
-def quick_sort_medium(A, left, right):
-    if left < right:
-        pivot = (left + right)//2
-        A[pivot], A[left] = (
-            A[left],
-            A[pivot],
-        )  # switches the pivot with the left most bound
-        pivot_index = partition(A, left, right)
-        quick_sort_medium(
-            A, left, pivot_index
-        )  # recursive quicksort to the left of the pivot point
-        quick_sort_medium(
-            A, pivot_index + 1, right
-        )  # recursive quicksort to the right of the pivot point
+def quick_sort_medium(A, low, high):
+    # Create a helper function that will be called recursively
+    if low < high:
+        # This is the index after the pivot, where our lists are split
+        split_index = partition(A, low, high)
+        quick_sort_medium(A, low, split_index)
+        quick_sort_medium(A, split_index + 1, high)
 
 
 ######################### usage functions ###################################
@@ -91,7 +107,7 @@ def tab_a_fill(arr, len):
 # Measuring time
 def mTime(ar, mysort, results):
     mytime = 0
-    for i in range(0,3):
+    for i in range(0,6):
         start_time = time.time()
         mysort(ar.copy(), 0, len(ar) - 1)
         mytime += time.time() - start_time
@@ -107,7 +123,7 @@ def plotting(vfr,vm,vr,vTime):
     plot.title("linear")
     plot.xlabel('number of sorts')
     plot.ylabel('time[s]')
-    plot.legend(["right","mediana","random"])
+    plot.legend(["far right","middle","random"])
     plot.grid(True)
 
     #logarithm
@@ -117,7 +133,7 @@ def plotting(vfr,vm,vr,vTime):
     plot.title(str('log'))
     plot.xlabel('number of sorts')
     plot.ylabel('time[s]')
-    plot.legend(["right","mediana","random"])
+    plot.legend(["far right","middle","random"])
     plot.grid(True) 
     
 
@@ -131,7 +147,7 @@ def main():
 	### settings of measure ###
 
 	
-	start_num = 2000
+	start_num = 1000
 	last_num = 3500
 	step = 100
     
