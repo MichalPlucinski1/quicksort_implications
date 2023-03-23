@@ -16,143 +16,65 @@ class aSort(Enum):
     m = 2
     r = 3
 
-
-######################### selecting index of rightmost #########################
-
-# Function to find the partition position
-def fr_partition(array, low, high):
-
-	# Choose the rightmost element as pivot
-	pivot = array[high]
-	#print("pivot of fr: ", pivot)
-	# Pointer for greater element
-	i = low - 1
-
-	# Traverse through all elements
-	# compare each element with pivot
-	for j in range(low, high):
-		if array[j] <= pivot:
-			# If element smaller than pivot is found
-			# swap it with the greater element pointed by i
-			i = i + 1
-
-			# Swapping element at i with element at j
-			(array[i], array[j]) = (array[j], array[i])
-
-	# Swap the pivot element with
-	# e greater element specified by i
-	(array[i + 1], array[high]) = (array[high], array[i + 1])
-
-	# Return the position from where partition is done
-	return i + 1
-
-# Function to perform quicksort
-def fr_quick_sort(array, low, high):
-	if low < high:
-
-		# Find pivot element such that
-		# element smaller than pivot are on the left
-		# element greater than pivot are on the right
-		pi = fr_partition(array, low, high)
-
-		# Recursive call on the left of pivot
-		fr_quick_sort(array, low, pi - 1)
-
-		# Recursive call on the right of pivot
-		fr_quick_sort(array, pi + 1, high)
+#################### sorts ####################
+def partition(A, left_index, right_index):
+    pivot = A[left_index]
+    i = left_index + 1
+    for j in range(left_index + 1, right_index):
+        if A[j] < pivot:
+            A[j], A[i] = A[i], A[j]
+            i += 1
+    A[left_index], A[i - 1] = A[i - 1], A[left_index]
+    return i - 1
 
 
-######################### selecting index of middle #########################
+def quick_sort_random(A, left, right):
+    if left < right:
+        pivot = random.randint(left, right - 1)
+        A[pivot], A[left] = (
+            A[left],
+            A[pivot],
+        )  # switches the pivot with the left most bound
+        pivot_index = partition(A, left, right)
+        quick_sort_random(
+            A, left, pivot_index
+        )  # recursive quicksort to the left of the pivot point
+        quick_sort_random(
+            A, pivot_index + 1, right
+        )  # recursive quicksort to the right of the pivot point
 
 
-# Function to find the partition position
-def m_partition(array, low, high):
+def quick_sort_right(A, left, right):
+    if left < right:
+        pivot = right-1
+        A[pivot], A[left] = (
+            A[left],
+            A[pivot],
+        )  # switches the pivot with the left most bound
+        pivot_index = partition(A, left, right)
+        quick_sort_right(
+            A, left, pivot_index
+        )  # recursive quicksort to the left of the pivot point
+        quick_sort_right(
+            A, pivot_index + 1, right
+        )  # recursive quicksort to the right of the pivot point
 
-	# Choose the rightmost element as pivot
-	l = int((high + low) / 2)
-	pivot = array[l]
-	#print("pivot of m:",pivot)
 
-	# Pointer for greater element
-	i = low - 1
+def quick_sort_medium(A, left, right):
+    if left < right:
+        pivot = (left + right)//2
+        A[pivot], A[left] = (
+            A[left],
+            A[pivot],
+        )  # switches the pivot with the left most bound
+        pivot_index = partition(A, left, right)
+        quick_sort_medium(
+            A, left, pivot_index
+        )  # recursive quicksort to the left of the pivot point
+        quick_sort_medium(
+            A, pivot_index + 1, right
+        )  # recursive quicksort to the right of the pivot point
 
-	# Traverse through all elements
-	# compare each element with pivot
-	for j in range(low, high):
-		if array[j] <= pivot:
-			# If element smaller than pivot is found
-			# swap it with the greater element pointed by i
-			i = i + 1
-
-			# Swapping element at i with element at j
-			(array[i], array[j]) = (array[j], array[i])
-
-	# Swap the pivot element with
-	# e greater element specified by i
-	(array[i + 1], array[high]) = (array[high], array[i + 1])
-
-	# Return the position from where partition is done
-	return i + 1
-
-# Function to perform quicksort
-def m_quick_sort(array, low, high):
-	if low < high:
-
-		# Find pivot element such that
-		# element smaller than pivot are on the left
-		# element greater than pivot are on the right
-		pi = m_partition(array, low, high)
-
-		# Recursive call on the left of pivot
-		m_quick_sort(array, low, pi - 1)
-
-		# Recursive call on the right of pivot
-		m_quick_sort(array, pi + 1, high)
-
-######################### selecting index of random #########################
-
-# Function to find the partition position
-def r_partition(array, low, high):
-
-	# Choose the rightmost element as pivot
-	rand = random.randrange(low, high)
-	pivot = array[rand]
-	#print("pivot of r:",pivot)
-	# Pointer for greater element
-	i = low - 1
-
-	# Traverse through all elements
-	# compare each element with pivot
-	for j in range(low, high):
-		if array[j] <= pivot:
-			# If element smaller than pivot is found
-			# swap it with the greater element pointed by i
-			i = i + 1
-
-			# Swapping element at i with element at j
-			(array[i], array[j]) = (array[j], array[i])
-
-	# Swap the pivot element with
-	# e greater element specified by i
-	(array[i + 1], array[high]) = (array[high], array[i + 1])
-
-	# Return the position from where partition is done
-	return i + 1
-
-# Function to perform quicksort
-def r_quick_sort(array, low, high):
-	if low < high:
-
-		# Find pivot element such that
-		# element smaller than pivot are on the left
-		# element greater than pivot are on the right
-		pi = r_partition(array, low, high)
-
-		# Recursive call on the left of pivot
-		r_quick_sort(array, low, pi - 1)
-
-		# Recursive call on the right of pivot
-		r_quick_sort(array, pi + 1, high)
 
 ######################### usage functions ###################################
 
@@ -167,23 +89,13 @@ def tab_a_fill(arr, len):
     
 
 # Measuring time
-def mTime(ar, sort, results):
-	if sort == aSort.fr:
-		start_time = time.time()
-		fr_quick_sort(ar.copy(), 0, len(ar) - 1)
-		stop_time = time.time() - start_time
-	
-	elif sort == aSort.m:
-		start_time = time.time()
-		m_quick_sort(ar.copy(), 0, len(ar) - 1)
-		stop_time = time.time() - start_time
-	
-	elif sort == aSort.r:
-		start_time = time.time()
-		r_quick_sort(ar.copy(), 0, len(ar) - 1)
-		stop_time = time.time() - start_time
-	
-	results.append(stop_time)
+def mTime(ar, mysort, results):
+    mytime = 0
+    for i in range(0,3):
+        start_time = time.time()
+        mysort(ar.copy(), 0, len(ar) - 1)
+        mytime += time.time() - start_time
+    results.append(mytime/5)
 
 
 
@@ -219,9 +131,9 @@ def main():
 	### settings of measure ###
 
 	
-	start_num = 20
-	last_num = 24
-	step = 2
+	start_num = 2000
+	last_num = 3500
+	step = 100
     
 
 	### bufored times ###
@@ -231,27 +143,75 @@ def main():
 	vTime = []
     
 
+	vfr1 = []
+	vm1 = []
+	vr1 = []
+        
+	vfr2 = []
+	vm2= []
+	vr2 = []
+        
+	vfr3 = []
+	vm3 = []
+	vr3 = []
 	### performing test ###
+	"""
 	for i in range(start_num, last_num + 1, step):
 		ar = []
 		tab_a_fill(ar, i)
 		vTime.append(i) #making y dimmension for plot
 		print("Filling, len of arr: ", len(ar), " of ", last_num)
-		print("i: ", i, "ar: ", ar)
 
-		
-		r_quick_sort(ar, 0, len(ar) - 1)
-		print("ar after sort: ", ar)
 
-		#mTime(ar, aSort.fr, vfr)
-		#mTime(ar, aSort.m, vm)
-		#mTime(ar, aSort.r, vr)
+		mTime(ar, quick_sort_right , vfr)
+		mTime(ar, quick_sort_medium, vm)
+		mTime(ar, quick_sort_random, vr)
+          """      
+	for i in range(start_num, last_num + 1, step):
+		ar = []
+		tab_a_fill(ar, i)
+		vTime.append(i) #making y dimmension for plot
+		print("Filling, len of arr: ", len(ar), " of ", last_num)
+
+
+		mTime(ar, quick_sort_right , vfr1)
+		mTime(ar, quick_sort_medium, vm1)
+		mTime(ar, quick_sort_random, vr1)
     
-        #print(sort.name,"  %s seconds " % (t))            
-		del ar	 
+	for i in range(start_num, last_num + 1, step):
+		ar = []
+		tab_a_fill(ar, i)
+		#vTime.append(i) #making y dimmension for plot
+		print("Filling, len of arr: ", len(ar), " of ", last_num)
 
-	#plotting(vfr, vm, vr, vTime)
-	#plot.show()
+
+		mTime(ar, quick_sort_right , vfr2)
+		mTime(ar, quick_sort_medium, vm2)
+		mTime(ar, quick_sort_random, vr2)
+    
+
+	for i in range(start_num, last_num + 1, step):
+		ar = []
+		tab_a_fill(ar, i)
+		#vTime.append(i) #making y dimmension for plot
+		print("Filling, len of arr: ", len(ar), " of ", last_num)
+
+
+		mTime(ar, quick_sort_right , vfr3)
+		mTime(ar, quick_sort_medium, vm3)
+		mTime(ar, quick_sort_random, vr3)
+    
+		del ar
+	for i in range(0, len(vfr1)):
+		vfr.append((vfr1[i] + vfr2[i] + vfr3[i])/3)
+		vm.append((vm1[i] + vm2[i] + vm3[i])/3)
+		vr.append((vr1[i] + vr2[i] + vr3[i])/3)
+	print("vfr: ", vfr)
+	print("vfr1: ", vfr1)
+	
+	print("len:" ,len(vTime), "len V:", len(vfr1))
+	plotting(vfr, vm, vr, vTime)
+	plot.show()
 
 	
 
